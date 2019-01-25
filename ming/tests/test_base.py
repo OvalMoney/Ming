@@ -53,15 +53,10 @@ class TestObject(TestCase):
             a=[1,2,3],
             b=dict(a=12),
             c=c)
-        safe_obj.make_safe()
         expected = Object(
                 a=[1,2,3], b=dict(a=12),
                 c=c)
         self.assertTrue(expected, safe_obj)
-
-        unsafe_obj = Object(
-            my_tuple=(1,2,3))
-        self.assertRaises(AssertionError, unsafe_obj.make_safe)
 
 
 if __name__ == '__main__':

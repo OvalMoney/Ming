@@ -51,10 +51,6 @@ class Object(dict):
         else:
             return bson
 
-    def make_safe(self):
-        safe_self = _safe_bson(self)
-        self.update(safe_self)
-
 
 class Cursor(object):
     '''Python class proxying a MongoDB cursor, constructing and validating
@@ -129,22 +125,3 @@ class Cursor(object):
     def rewind(self):
         self.cursor = self.cursor.rewind()
         return self
-
-NoneType = type(None)
-def _safe_bson(obj):
-    '''Verify that the obj is safe for bsonification (in particular, no tuples or
-    Decimal objects
-    '''
-    if isinstance(obj, list):
-        return [ _safe_bson(o) for o in obj ]
-    elif isinstance(obj, dict):
-        return Object((k, _safe_bson(v)) for k,v in six.iteritems(obj))
-    elif isinstance(obj, six.string_types + six.integer_types + (
-            float, datetime, NoneType,
-            bson.ObjectId)):
-        return obj
-    elif isinstance(obj, decimal.Decimal):
-        return float(obj)
-    else:
-        assert False, '%s is not safe for bsonification: %r' % (
-            type(obj), obj)
